@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.urls import path
-from core.views import YouTubeSearchView
+from core.views import YouTubeSearchView, YouTubeDetailView
 
 urlpatterns = [
-    # URL path for Django admin site
-    path('admin/', admin.site.urls),
-    # URL path for search API endpoint, /api/search?q=...
-    path('api/search/', YouTubeSearchView.as_view()),
+    path('admin/', admin.site.urls), # URL path for Django admin site
+    path('api/search/', YouTubeSearchView.as_view()), # URL path for search API endpoint, /api/search?q=...
+    path('api/videos/<str:video_id>/', YouTubeDetailView.as_view()), # URL path for search API endpoint, /api/videos/<video_id>
 ]
