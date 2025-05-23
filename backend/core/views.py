@@ -10,6 +10,7 @@ class YouTubeSearchView(APIView):
     def get(self, request):
         # Get search query from the URL (?q=...). If not included then return 400 error
         search_query = request.query_params.get('q', '')
+        page_token = request.query_params.get('pageToken', None)
         if not search_query:
             return Response({"error":"q parameter required"}, status=400)
         
@@ -25,6 +26,9 @@ class YouTubeSearchView(APIView):
             'type': 'video',
             'key': api_key
         }
+        
+        if page_token:
+            params['pageToken'] = page_token
         
         # Call YT Data API and parse JSON response
         response = requests.get(url, params=params).json()
@@ -44,7 +48,12 @@ class YouTubeSearchView(APIView):
             
             # Pick best thumbnail (maxres > high > default)
             thumbnails = snippet.get('thumbnails', {})
-            thumbnail_url = thumbnails.get('maxres', {}).get('url') or thumbnails.get('high', {}).get('url') or thumbnails.get('default', {}).get('url') or ''
+            thumbnail_url = (
+                thumbnails.get('maxres', {}).get('url')
+                or thumbnails.get('high', {}).get('url')
+                or thumbnails.get('default', {}).get('url')
+                or ''
+            )
         
             # Build simplified dictionary for serializer
             results.append({
@@ -53,9 +62,15 @@ class YouTubeSearchView(APIView):
                 'thumbnail_url': thumbnail_url, # Default thumbnail URL
                 'channel_name': html.unescape(snippet.get('channelTitle','')) # YT channel name
             })
+            
         # Serialize and return the results
         data = YouTubeResultSerializer(results, many=True).data
-        return Response(data)
+        next_page_token = response.get('nextPageToken')
+        
+        return Response({
+            'results': data,
+            'nextPageToken': next_page_token
+        })
     
     
 # Class to return detailed YT video with full description
