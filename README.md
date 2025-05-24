@@ -5,5 +5,5 @@
   - Frontend: React
   - Database: PostgreSQL
 - Run dev build:
-  - Backend: `make backend` - cd's into backend and runs `python manage.py runserver`
-  - Frontend: `make frontend` - cd's into frontend and runs `npm run dev`
+  - Backend: `cd backend` followed by `.venv/Scripts/Activate` and then `python manage.py runserver`
+  - Frontend: `cd frontend` followed by `npm run dev`
