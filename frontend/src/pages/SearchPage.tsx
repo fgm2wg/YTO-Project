@@ -15,7 +15,9 @@ export default function SearchPage() {
 	const fetchResults = async (q: string, pageToken?: string) => {
 		setLoading(true);
 		const params: any = { q, maxResults: 10 };
-		if (pageToken) params.pageToken = pageToken;
+		if (pageToken) {
+			params.pageToken = pageToken;
+		}
 
 		const { data } = await axios.get("/api/search/", { params });
 		setResults((prev) =>
@@ -33,7 +35,9 @@ export default function SearchPage() {
 	};
 
 	useEffect(() => {
-		if (!loaderRef.current) return;
+		if (!loaderRef.current) {
+			return;
+		}
 
 		const observer = new IntersectionObserver(
 			(entries) => {
