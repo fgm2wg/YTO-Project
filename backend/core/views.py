@@ -62,7 +62,7 @@ class YouTubeSearchView(APIView):
     
     
 class YouTubeDetailView(APIView):
-    def get(self, video_id):
+    def get(self, request, video_id):
         api_key = config('YOUTUBE_API_KEY')
         
         url = 'https://www.googleapis.com/youtube/v3/videos'
@@ -81,7 +81,12 @@ class YouTubeDetailView(APIView):
         snippet = results[0].get('snippet', {})
         
         thumbnails = snippet.get('thumbnails', {})
-        thumbnail_url = thumbnails.get('maxres', {}).get('url') or thumbnails.get('high', {}).get('url') or thumbnails.get('default', {}).get('url') or ''
+        thumbnail_url = (
+            thumbnails.get('maxres', {}).get('url')
+            or thumbnails.get('high', {}).get('url')
+            or thumbnails.get('default', {}).get('url')
+            or ''
+        )
              
         detail = {
             'youtube_id': results[0]['id'],
