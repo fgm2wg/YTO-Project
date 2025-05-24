@@ -12,3 +12,7 @@ class YouTubeVideoDetailSerializer(serializers.Serializer):
     thumbnail_url = serializers.CharField()
     channel_name = serializers.CharField()
     description = serializers.CharField()
+    channel_icon_url = serializers.CharField()
+    view_count = serializers.IntegerField()
+    like_count = serializers.IntegerField()
+    published_at = serializers.DateTimeField()

@@ -1,5 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import {
+	CalendarDaysIcon,
+	EyeIcon,
+	HandThumbUpIcon,
+} from "@heroicons/react/24/solid";
 import axios from "axios";
 import type { YouTubeVideoDetail } from "../types";
 
@@ -9,15 +14,25 @@ export default function VideoPage() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!videoId) return;
+		if (!videoId) {
+			return;
+		}
 		axios
 			.get<YouTubeVideoDetail>(`/api/videos/${videoId}/`)
 			.then((r) => setVideo(r.data))
 			.finally(() => setLoading(false));
 	}, [videoId]);
 
-	if (loading) return <p className="p-4">Loading…</p>;
-	if (!video) return <p className="p-4">Video not found.</p>;
+	if (loading) {
+		return <p className="p-4">Loading…</p>;
+	}
+	if (!video) {
+		return <p className="p-4">Video not found.</p>;
+	}
+
+	const publishedDate = new Date(video.published_at).toLocaleDateString();
+	const views = video.view_count.toLocaleString();
+	const likes = video.like_count.toLocaleString();
 
 	return (
 		<div className="p-4 max-w-screen-lg mx-auto">
@@ -33,8 +48,27 @@ export default function VideoPage() {
 			<h1 className="mt-4 text-3xl font-semibold">{video.title}</h1>
 
 			<div className="mt-2 flex items-center space-x-3">
-				<div className="w-10 h-10 bg-gray-300 rounded-full" />
+				<img
+					src={video.channel_icon_url}
+					alt={video.channel_name}
+					className="w-10 h-10 rounded-full object-cover"
+				/>
 				<p className="text-lg font-medium">{video.channel_name}</p>
+			</div>
+
+			<div className="mt-4 flex flex-wrap items-center text-gray-600 space-x-6 text-sm">
+				<div className="flex items-center space-x-1">
+					<CalendarDaysIcon className="w-5 h-5" />
+					<span>{publishedDate}</span>
+				</div>
+				<div className="flex items-center space-x-1">
+					<EyeIcon className="w-5 h-5" />
+					<span>{views}</span>
+				</div>
+				<div className="flex items-center space-x-1">
+					<HandThumbUpIcon className="w-5 h-5" />
+					<span>{likes}</span>
+				</div>
 			</div>
 
 			<div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">

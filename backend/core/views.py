@@ -67,7 +67,7 @@ class YouTubeDetailView(APIView):
         
         url = 'https://www.googleapis.com/youtube/v3/videos'
         params = {
-            'part': 'snippet',
+            'part': 'snippet,statistics',
             'id': video_id,
             'key': api_key
         }
@@ -78,7 +78,9 @@ class YouTubeDetailView(APIView):
         if not results:
             return Response({"error":"video not found"}, status=404)
 
-        snippet = results[0].get('snippet', {})
+        video_data = results[0]
+        snippet = video_data.get('snippet', {})
+        statistics = video_data.get('statistics', {})
         
         thumbnails = snippet.get('thumbnails', {})
         thumbnail_url = (
@@ -87,13 +89,37 @@ class YouTubeDetailView(APIView):
             or thumbnails.get('default', {}).get('url')
             or ''
         )
-             
+        
+        view_count = int(statistics.get('viewCount', 0))
+        like_count = int(statistics.get('likeCount', 0))
+        published_at = snippet.get('publishedAt')
+        
+        channel_icon_url = ''
+        channel_id = snippet.get('channelId')
+        if channel_id:
+            url = 'https://www.googleapis.com/youtube/v3/channels'
+            params = {
+                'part': 'snippet',
+                'id': channel_id,
+                'key': api_key
+            }
+            resp = requests.get(url, params=params).json()
+            channel_results = resp.get('items', [])
+            if channel_results:
+                channel_snippet = channel_results[0].get('snippet', {})
+                channel_thumbnails = channel_snippet.get('thumbnails', {})
+                channel_icon_url = channel_thumbnails.get('default', {}).get('url')
+
         detail = {
             'youtube_id': results[0]['id'],
             'title': html.unescape(snippet.get('title', '')),
             'thumbnail_url': thumbnail_url,
             'channel_name': html.unescape(snippet.get('channelTitle', '')),
-            'description': html.unescape(snippet.get('description', ''))
+            'description': html.unescape(snippet.get('description', '')),
+            'channel_icon_url': channel_icon_url,
+            'view_count': view_count,
+            'like_count': like_count,
+            'published_at': published_at
         }
         data = YouTubeVideoDetailSerializer(detail).data
         return Response(data)

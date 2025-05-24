@@ -9,7 +9,9 @@ export default function SearchBar({ onSearch, loading }: Props) {
 	const [text, setText] = useState("");
 	const submit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (text.trim()) onSearch(text.trim());
+		if (text.trim()) {
+			onSearch(text.trim());
+		}
 	};
 
 	return (

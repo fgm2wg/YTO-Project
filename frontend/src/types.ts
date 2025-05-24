@@ -7,4 +7,8 @@ export interface YouTubeResult {
 
 export interface YouTubeVideoDetail extends YouTubeResult {
 	description: string;
+	channel_icon_url: string;
+	view_count: number;
+	like_count: number;
+	published_at: string;
 }
