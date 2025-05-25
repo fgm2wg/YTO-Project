@@ -2,9 +2,11 @@
 <html lang="en">
 	<head>
 		<script>
-			if (window.trustedTypes) {
+			if (window.trustedTypes && window.trustedTypes.createPolicy) {
 				window.trustedTypes.createPolicy("default", {
-					createScriptURL: (url) => url,
+					createHTML: (string) => string,
+					createScriptURL: (string) => string,
+					createScript: (string) => string,
 				});
 			}
 		</script>

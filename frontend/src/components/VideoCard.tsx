@@ -1,5 +1,5 @@
 import type { YouTubeResult } from "../types";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface Props {
 	video: YouTubeResult;
@@ -7,20 +7,27 @@ interface Props {
 }
 
 export default function VideoCard({ video, variant = "row" }: Props) {
+	const location = useLocation();
+	const to = `${variant === "grid" ? "" : ""}/video/${video.youtube_id}${
+		location.search
+	}`;
+
 	if (variant === "grid") {
 		return (
 			<Link
-				to={`/video/${video.youtube_id}`}
-				className="flex flex-col bg-white rounded-lg overflow-hidden hover:shadow-lg"
+				to={to}
+				className="block bg-white rounded-lg overflow-hidden hover:shadow-lg"
 			>
-				<img
-					src={video.thumbnail_url}
-					alt={video.title}
-					className="w-full h-auto object-cover"
-				/>
+				<div className="w-full aspect-video overflow-hidden">
+					<img
+						src={video.thumbnail_url}
+						alt={video.title}
+						className="w-full h-full object-cover"
+					/>
+				</div>
 				<div className="p-2">
 					<h3 className="text-md font-medium">{video.title}</h3>
-					<p className="text-xs text-gray-500 mt-1">
+					<p className="text-sm text-gray-500 mt-1">
 						{video.channel_name}
 					</p>
 				</div>
@@ -30,7 +37,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 
 	return (
 		<Link
-			to={`/video/${video.youtube_id}`}
+			to={to}
 			className="w-full flex items-start space-x-4 p-4 hover:bg-gray-100 rounded-md"
 		>
 			<div className="w-125 aspect-video flex-shrink-0">

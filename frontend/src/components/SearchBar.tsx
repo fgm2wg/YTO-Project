@@ -1,12 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
 	onSearch: (q: string) => void;
 	loading: boolean;
+	initialValue?: string;
+	showClear?: boolean;
 }
 
-export default function SearchBar({ onSearch, loading }: Props) {
-	const [text, setText] = useState("");
+export default function SearchBar({
+	onSearch,
+	loading,
+	initialValue = "",
+	showClear = false,
+}: Props) {
+	const [text, setText] = useState(initialValue);
+
+	useEffect(() => {
+		setText(initialValue);
+	}, [initialValue]);
+
 	const submit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (text.trim()) {
@@ -22,6 +34,15 @@ export default function SearchBar({ onSearch, loading }: Props) {
 				placeholder="Search YouTube…"
 				className="flex-grow px-3 py-2 border rounded-l"
 			/>
+			{showClear && text && (
+				<button
+					type="button"
+					onClick={() => setText("")}
+					className="px-2 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-l-none"
+				>
+					×
+				</button>
+			)}
 			<button
 				type="submit"
 				disabled={loading}

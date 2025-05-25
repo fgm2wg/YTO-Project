@@ -1,13 +1,48 @@
-export default function SidePanel() {
-	const tabs = ["Home", "Playlists", "History", "Settings"];
+import {
+	HomeIcon,
+	MusicalNoteIcon,
+	ClockIcon,
+	Cog6ToothIcon,
+} from "@heroicons/react/24/solid";
+import { Link, useLocation } from "react-router-dom";
+
+const tabs = [
+	{ label: "Home", to: "/", Icon: HomeIcon },
+	{ label: "Playlists", to: "/playlists", Icon: MusicalNoteIcon },
+	{ label: "History", to: "/history", Icon: ClockIcon },
+	{ label: "Settings", to: "/settings", Icon: Cog6ToothIcon },
+];
+
+interface SidePanelProps {
+	className?: string;
+}
+
+export default function SidePanel({ className = "" }: SidePanelProps) {
+	const { pathname } = useLocation();
+
 	return (
-		<nav className="w-48 p-4 bg-white shadow-inner">
+		<nav
+			className={
+				`${className} ` +
+				`w-48 h-full bg-white border-r border-gray-200 ` +
+				`shadow-inner p-4 overflow-y-auto`
+			}
+		>
 			<ul className="space-y-2">
-				{tabs.map((tab) => (
-					<li key={tab}>
-						<button className="w-full text-left px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
-							{tab}
-						</button>
+				{tabs.map(({ label, to, Icon }) => (
+					<li key={label}>
+						<Link
+							to={to}
+							className={
+								"flex items-center px-2 py-1 rounded hover:bg-gray-100 cursor-pointer " +
+								(pathname === to
+									? "bg-gray-200 font-medium"
+									: "")
+							}
+						>
+							<Icon className="w-5 h-5 mr-2 text-gray-600" />
+							<span>{label}</span>
+						</Link>
 					</li>
 				))}
 			</ul>
