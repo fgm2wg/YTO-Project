@@ -15,7 +15,7 @@ export default function SearchBar({ onSearch, loading }: Props) {
 	};
 
 	return (
-		<form onSubmit={submit} className="flex mb-4">
+		<form onSubmit={submit} className="flex">
 			<input
 				value={text}
 				onChange={(e) => setText(e.target.value)}
@@ -25,7 +25,7 @@ export default function SearchBar({ onSearch, loading }: Props) {
 			<button
 				type="submit"
 				disabled={loading}
-				className="px-4 bg-green-600 text-white rounded-r"
+				className="px-4 py-2 bg-green-600 text-white rounded-r"
 			>
 				{loading ? "…" : "Search"}
 			</button>

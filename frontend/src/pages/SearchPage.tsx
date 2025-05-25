@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import SearchBar from "../components/SearchBar";
 import VideoList from "../components/VideoList";
 import type { YouTubeResult } from "../types";
 
 export default function SearchPage() {
-	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<YouTubeResult[]>([]);
 	const [nextPage, setNextPage] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
 
+	const queryParam = searchParams.get("q") || "";
 	const loaderRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchResults = async (q: string, pageToken?: string) => {
@@ -27,12 +29,13 @@ export default function SearchPage() {
 		setLoading(false);
 	};
 
-	const onSearch = (q: string) => {
-		setQuery(q);
-		setResults([]);
-		setNextPage(null);
-		fetchResults(q);
-	};
+	useEffect(() => {
+		if (queryParam.trim()) {
+			setResults([]);
+			setNextPage(null);
+			fetchResults(queryParam);
+		}
+	}, [queryParam]);
 
 	useEffect(() => {
 		if (!loaderRef.current) {
@@ -43,7 +46,7 @@ export default function SearchPage() {
 			(entries) => {
 				const entry = entries[0];
 				if (entry.isIntersecting && nextPage && !loading) {
-					fetchResults(query, nextPage);
+					fetchResults(queryParam, nextPage);
 				}
 			},
 			{
@@ -58,11 +61,15 @@ export default function SearchPage() {
 		return () => {
 			observer.disconnect();
 		};
-	}, [query, nextPage, loading]);
+	}, [queryParam, nextPage, loading]);
+
+	const handleSearch = (q: string) => {
+		setSearchParams({ q });
+	};
 
 	return (
 		<div className="p-4">
-			<SearchBar onSearch={onSearch} loading={loading} />
+			<SearchBar onSearch={handleSearch} loading={loading} />
 			<VideoList videos={results} />
 
 			<div ref={loaderRef} />
