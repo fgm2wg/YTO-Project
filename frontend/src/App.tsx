@@ -20,7 +20,7 @@ export default function App() {
 					(isHome ? (
 						<SidePanel />
 					) : (
-						<SidePanel className="absolute left-0 top-0 bottom-0 z-20" />
+						<SidePanel className="absolute" />
 					))}
 
 				<main className="flex-1 overflow-y-auto p-4">
