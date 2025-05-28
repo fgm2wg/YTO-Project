@@ -4,9 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-	@apply bg-gray-50 text-gray-900;
-}
-a:hover {
-	@apply underline;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+	html,
+	body {
+		@apply bg-gray-50 text-gray-900;
+	}
+	.dark html,
+	.dark body {
+		@apply bg-gray-900 text-gray-100;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p,
+	li,
+	span,
+	label {
+		@apply text-inherit;
+	}
+
+	a {
+		@apply text-black dark:text-white;
+	}
 }

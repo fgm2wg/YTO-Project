@@ -20,12 +20,12 @@ export default function NavBar({ onToggleSidebar }: Props) {
 	};
 
 	return (
-		<header className="flex items-center justify-between px-6 py-4 bg-white shadow sticky top-0 z-10">
+		<header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 shadow sticky top-0 z-10">
 			<button
 				onClick={onToggleSidebar}
-				className="p-2 rounded hover:bg-gray-100 mr-4 cursor-pointer"
+				className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 mr-4 cursor-pointer"
 			>
-				<Bars3Icon className="w-6 h-6 text-gray-600" />
+				<Bars3Icon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
 			</button>
 
 			<h1
@@ -42,8 +42,11 @@ export default function NavBar({ onToggleSidebar }: Props) {
 					showClear
 				/>
 			</div>
-			<button className="p-2 rounded hover:bg-gray-100 cursor-pointer">
-				<Cog6ToothIcon className="w-6 h-6 text-gray-600" />
+			<button
+				onClick={() => navigate("/settings")}
+				className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+			>
+				<Cog6ToothIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
 			</button>
 		</header>
 	);

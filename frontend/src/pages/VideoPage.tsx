@@ -56,7 +56,7 @@ export default function VideoPage() {
 				<p className="text-lg font-medium">{video.channel_name}</p>
 			</div>
 
-			<div className="mt-4 flex flex-wrap items-center text-gray-600 space-x-6 text-sm">
+			<div className="mt-4 flex flex-wrap items-center text-gray-600 dark:text-gray-300 space-x-6 text-sm">
 				<div className="flex items-center space-x-1">
 					<CalendarDaysIcon className="w-5 h-5" />
 					<span>{publishedDate}</span>
@@ -71,8 +71,8 @@ export default function VideoPage() {
 				</div>
 			</div>
 
-			<div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-				<p className="whitespace-pre-wrap text-gray-700">
+			<div className="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200">
+				<p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
 					{video.description}
 				</p>
 			</div>

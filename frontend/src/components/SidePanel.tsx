@@ -24,7 +24,7 @@ export default function SidePanel({ className = "" }: SidePanelProps) {
 		<nav
 			className={
 				`${className} ` +
-				`w-48 h-full bg-white border-r border-gray-200 ` +
+				`w-48 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 ` +
 				`shadow-inner p-4 overflow-y-auto`
 			}
 		>
@@ -34,13 +34,13 @@ export default function SidePanel({ className = "" }: SidePanelProps) {
 						<Link
 							to={to}
 							className={
-								"flex items-center px-2 py-1 rounded hover:bg-gray-100 cursor-pointer " +
+								"flex items-center px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer " +
 								(pathname === to
-									? "bg-gray-200 font-medium"
+									? "bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white font-medium"
 									: "")
 							}
 						>
-							<Icon className="w-5 h-5 mr-2 text-gray-600" />
+							<Icon className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-300" />
 							<span>{label}</span>
 						</Link>
 					</li>

@@ -16,7 +16,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 		return (
 			<Link
 				to={to}
-				className="block bg-white rounded-lg overflow-hidden hover:shadow-lg"
+				className="block bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden hover:shadow-lg hover:bg-gray-200 dark:hover:bg-gray-700"
 			>
 				<div className="w-full aspect-video overflow-hidden">
 					<img
@@ -38,7 +38,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 	return (
 		<Link
 			to={to}
-			className="w-full flex items-start space-x-4 p-4 hover:bg-gray-100 rounded-md"
+			className="w-full flex items-start space-x-4 p-4 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"
 		>
 			<div className="w-125 aspect-video flex-shrink-0">
 				<img
