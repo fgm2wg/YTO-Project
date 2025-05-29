@@ -10,7 +10,7 @@ export default function SettingsPage({ darkMode, setDarkMode }: Props) {
 		<div className="max-w-screen-lg mx-auto p-4">
 			<h1 className="text-3xl font-semibold mb-6">Settings</h1>
 
-			<div className="flex items-center justify-between p-4 bg-gray-200 dark:bg-gray-700 rounded shadow">
+			<div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded shadow">
 				<span className="text-lg">Dark Mode</span>
 				<label className="inline-flex items-center space-x-2">
 					<input

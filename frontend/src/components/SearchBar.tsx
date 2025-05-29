@@ -32,7 +32,7 @@ export default function SearchBar({
 				value={text}
 				onChange={(e) => setText(e.target.value)}
 				placeholder="Search YouTube…"
-				className="flex-grow px-3 py-2 border rounded-l"
+				className="flex-grow px-3 py-2 border rounded-l bg-gray-50 dark:bg-gray-700"
 			/>
 			{showClear && text && (
 				<button

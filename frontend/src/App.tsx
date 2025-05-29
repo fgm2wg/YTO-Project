@@ -29,7 +29,7 @@ export default function App() {
 		<div className="flex flex-col h-screen">
 			<NavBar onToggleSidebar={() => setCollapsed((c) => !c)} />
 
-			<div className="flex flex-1 overflow-hidden bg-gray-50 dark:bg-gray-900 relative">
+			<div className="flex flex-1 overflow-hidden bg-gray-100 dark:bg-gray-900 relative">
 				{!collapsed &&
 					(isHome ? (
 						<SidePanel />

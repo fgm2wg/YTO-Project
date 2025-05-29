@@ -20,7 +20,7 @@ export default function NavBar({ onToggleSidebar }: Props) {
 	};
 
 	return (
-		<header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 shadow sticky top-0 z-10">
+		<header className="flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-800 shadow sticky top-0 z-10">
 			<button
 				onClick={onToggleSidebar}
 				className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 mr-4 cursor-pointer"
