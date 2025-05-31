@@ -37,7 +37,7 @@ export default function VideoGrid() {
 
 	if (loading) {
 		return (
-			<p className="p-4 bg-gray-100 dark:bg-gray-900 text-accent">
+			<p className="p-4 bg-gray-100 dark:bg-gray-900 text-body">
 				Loading recommendations…
 			</p>
 		);

@@ -63,7 +63,7 @@ export default function SearchPage() {
 	}, [queryParam, nextPage, loading]);
 
 	return (
-		<div className="p-4">
+		<div>
 			<VideoList videos={results} />
 
 			<div ref={loaderRef} />

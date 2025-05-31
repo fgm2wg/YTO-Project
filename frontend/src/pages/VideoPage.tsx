@@ -24,10 +24,12 @@ export default function VideoPage() {
 	}, [videoId]);
 
 	if (loading) {
-		return <p className="p-4">Loading…</p>;
+		return <p className="text-center mt-4 text-gray-500">Loading…</p>;
 	}
 	if (!video) {
-		return <p className="p-4">Video not found.</p>;
+		return (
+			<p className="text-center mt-4 text-gray-500">Video not found</p>
+		);
 	}
 
 	const publishedDate = new Date(video.published_at).toLocaleDateString();
