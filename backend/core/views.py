@@ -27,7 +27,7 @@ class YouTubeSearchView(APIView):
             'fields': (
                 'items('
                   'id/videoId,'
-                  'snippet(title,channelTitle,thumbnails(high(url)))'
+                  'snippet(title,channelTitle,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url)))'
                 '),'
                 'nextPageToken'
             )
@@ -48,7 +48,11 @@ class YouTubeSearchView(APIView):
             snippet = item['snippet']
             
             thumbnails = snippet.get('thumbnails', {})
-            thumbnail_url = thumbnails.get('high', {}).get('url')
+            thumbnail_url = None
+            for res in ["maxres", "standard", "high", "medium", "default"]:
+                if res in thumbnails and thumbnails[res].get("url"):
+                    thumbnail_url = thumbnails[res]["url"]
+                    break
         
             results.append({
                 'youtube_id': youtube_id,
@@ -80,7 +84,7 @@ class YouTubeDetailView(APIView):
                 "items("
                   "id,"
                   "snippet(title,description,channelTitle,channelId,"
-                          "publishedAt,thumbnails(maxres(url))),"
+                          "publishedAt,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url))),"
                   "statistics(viewCount,likeCount)"
                 ")"
             )
@@ -97,7 +101,11 @@ class YouTubeDetailView(APIView):
         statistics = video_data.get('statistics', {})
         
         thumbnails = snippet.get('thumbnails', {})
-        thumbnail_url = thumbnails.get('maxres', {}).get('url')
+        thumbnail_url = None
+        for res in ["maxres", "standard", "high", "medium", "default"]:
+            if res in thumbnails and thumbnails[res].get("url"):
+                thumbnail_url = thumbnails[res]["url"]
+                break
         
         view_count = int(statistics.get('viewCount', 0))
         like_count = int(statistics.get('likeCount', 0))
@@ -110,14 +118,19 @@ class YouTubeDetailView(APIView):
             params = {
                 'part': 'snippet',
                 'id': channel_id,
-                'key': api_key
+                'key': api_key,
+                'fields': 'items(snippet(thumbnails(default(url),medium(url),high(url))))'
             }
             response = requests.get(url, params=params).json()
             channel_results = response.get('items', [])
             if channel_results:
                 channel_snippet = channel_results[0].get('snippet', {})
                 channel_thumbnails = channel_snippet.get('thumbnails', {})
-                channel_icon_url = channel_thumbnails.get('default', {}).get('url')
+                channel_icon_url = None
+                for res in ["high", "medium", "default"]:
+                    if res in channel_thumbnails and channel_thumbnails[res].get("url"):
+                        channel_icon_url = channel_thumbnails[res]["url"]
+                        break
 
         detail = {
             'youtube_id': results[0]['id'],
@@ -145,7 +158,7 @@ class YouTubeTrendingView(APIView):
             "regionCode": "US",
             "maxResults": 12,
             "key": api_key,
-            "fields": "items(id,snippet(title,channelTitle,thumbnails(standard(url))))"
+            "fields": "items(id,snippet(title,channelTitle,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url))))"
         }
         resp = requests.get(url, params=params).json()
         items = resp.get("items", [])
@@ -153,7 +166,14 @@ class YouTubeTrendingView(APIView):
         results = []
         for vid in items:
             snippet = vid["snippet"]
-            thumbnail_url = snippet["thumbnails"]["standard"]["url"]
+            
+            thumbnails = snippet.get("thumbnails", {})
+            thumbnail_url = None
+            for res in ["maxres", "standard", "high", "medium", "default"]:
+                if res in thumbnails and thumbnails[res].get("url"):
+                    thumbnail_url = thumbnails[res]["url"]
+                    break
+                
             results.append({
                 "youtube_id": vid["id"],
                 "title": html.unescape(snippet["title"]),

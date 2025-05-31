@@ -7,13 +7,31 @@
 @layer base {
 	:root {
 		--color-accent: #3b82f6; /* blue-500 */
-		--color-accent-hover: #2563eb; /* blue-600 */
+		--color-accent-lighter: color-mix(
+			in srgb,
+			var(--color-accent) 10%,
+			white
+		);
+		--color-accent-hover: color-mix(
+			in srgb,
+			var(--color-accent) 75%,
+			black
+		);
 		--color-text: #111827; /* gray-900 */
 	}
 
 	.dark {
 		--color-accent: #60a5fa; /* blue-400 */
-		--color-accent-hover: #3b82f6; /* blue-500 */
+		--color-accent-lighter: color-mix(
+			in srgb,
+			var(--color-accent) 10%,
+			white
+		);
+		--color-accent-hover: color-mix(
+			in srgb,
+			var(--color-accent) 75%,
+			black
+		);
 		--color-text: #f9fafb; /* gray-100 */
 	}
 

@@ -29,7 +29,7 @@ export default function NavBar({ onToggleSidebar }: Props) {
 			</button>
 
 			<h1
-				className="text-2xl font-bold cursor-pointer text-accent"
+				className="text-3xl font-bold cursor-pointer text-accent"
 				onClick={() => navigate("/")}
 			>
 				YTO

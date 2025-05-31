@@ -6,6 +6,7 @@ import SearchPage from "./pages/SearchPage";
 import VideoPage from "./pages/VideoPage";
 import HomePage from "./pages/HomePage";
 import SettingsPage from "./pages/SettingsPage";
+import PlaylistsPage from "./pages/PlaylistsPage";
 import { useThemeSettings } from "./hooks/useThemeSettings";
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
 						<Route path="/" element={<HomePage />} />
 						<Route path="/search" element={<SearchPage />} />
 						<Route path="/video/:videoId" element={<VideoPage />} />
+						<Route path="/playlists" element={<PlaylistsPage />} />
 						<Route
 							path="/settings"
 							element={

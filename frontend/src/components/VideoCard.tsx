@@ -21,7 +21,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 				<div className="w-full aspect-video overflow-hidden">
 					<img
 						src={video.thumbnail_url}
-						alt={video.title}
+						alt="rip :("
 						className="w-full h-full object-cover"
 					/>
 				</div>
@@ -43,7 +43,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 			<div className="w-125 aspect-video flex-shrink-0">
 				<img
 					src={video.thumbnail_url}
-					alt={video.title}
+					alt="rip :("
 					className="w-full h-full object-cover rounded"
 				/>
 			</div>
