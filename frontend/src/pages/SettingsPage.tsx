@@ -1,14 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
+import type { ColorSetting } from "../types";
 
-export interface ColorSetting {
-	label: string;
-	value: string;
-	defaultValue: string;
-	setter: Dispatch<SetStateAction<string>>;
-}
-
-interface SettingsPageProps {
+interface Props {
 	darkMode: boolean;
 	setDarkMode: Dispatch<SetStateAction<boolean>>;
 	lightSettings: ColorSetting[];
@@ -20,7 +14,7 @@ export default function SettingsPage({
 	setDarkMode,
 	lightSettings,
 	darkSettings,
-}: SettingsPageProps) {
+}: Props) {
 	return (
 		<div className="max-w-screen-lg mx-auto p-4 space-y-8">
 			<h1 className="text-4xl font-semibold">Settings</h1>

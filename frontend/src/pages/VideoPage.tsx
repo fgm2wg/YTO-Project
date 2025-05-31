@@ -52,7 +52,7 @@ export default function VideoPage() {
 			<div className="mt-2 flex items-center space-x-3">
 				<img
 					src={video.channel_icon_url}
-					alt={video.channel_name}
+					alt="rip :("
 					className="w-10 h-10 rounded-full object-cover"
 				/>
 				<p className="text-lg font-medium">{video.channel_name}</p>

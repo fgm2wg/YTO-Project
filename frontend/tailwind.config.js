@@ -9,6 +9,7 @@ module.exports = {
 			},
 			colors: {
 				accent: "var(--color-accent)",
+				"accent-lighter": "var(--color-accent-lighter)",
 				"accent-hover": "var(--color-accent-hover)",
 				body: "var(--color-text)",
 			},

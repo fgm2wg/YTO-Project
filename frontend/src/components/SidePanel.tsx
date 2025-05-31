@@ -13,11 +13,11 @@ const tabs = [
 	{ label: "Settings", to: "/settings", Icon: Cog6ToothIcon },
 ];
 
-interface SidePanelProps {
+interface Props {
 	className?: string;
 }
 
-export default function SidePanel({ className = "" }: SidePanelProps) {
+export default function SidePanel({ className = "" }: Props) {
 	const { pathname } = useLocation();
 
 	return (
