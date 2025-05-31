@@ -32,7 +32,7 @@ export default function SearchBar({
 				value={text}
 				onChange={(e) => setText(e.target.value)}
 				placeholder="Search YouTube…"
-				className="flex-grow px-3 py-2 border rounded-l bg-gray-50 dark:bg-gray-700"
+				className="flex-grow px-3 py-2 border rounded-l bg-gray-50 dark:bg-gray-700 text-body"
 			/>
 			{showClear && text && (
 				<button
@@ -46,7 +46,7 @@ export default function SearchBar({
 			<button
 				type="submit"
 				disabled={loading}
-				className="px-4 py-2 bg-green-600 text-white rounded-r"
+				className="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-r"
 			>
 				{loading ? "…" : "Search"}
 			</button>

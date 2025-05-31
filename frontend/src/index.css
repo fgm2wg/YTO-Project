@@ -5,13 +5,20 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-	html,
-	body {
-		@apply bg-gray-50 text-gray-900;
+	:root {
+		--color-accent: #3b82f6; /* blue-500 */
+		--color-accent-hover: #2563eb; /* blue-600 */
+		--color-text: #111827; /* gray-900 */
 	}
-	.dark html,
-	.dark body {
-		@apply bg-gray-900 text-gray-100;
+
+	.dark {
+		--color-accent: #60a5fa; /* blue-400 */
+		--color-accent-hover: #3b82f6; /* blue-500 */
+		--color-text: #f9fafb; /* gray-100 */
+	}
+
+	body {
+		@apply text-body;
 	}
 
 	h1,
@@ -20,14 +27,7 @@
 	h4,
 	h5,
 	h6,
-	p,
-	li,
-	span,
-	label {
-		@apply text-inherit;
-	}
-
 	a {
-		@apply text-black dark:text-white;
+		@apply text-body;
 	}
 }

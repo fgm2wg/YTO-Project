@@ -80,7 +80,7 @@ class YouTubeDetailView(APIView):
                 "items("
                   "id,"
                   "snippet(title,description,channelTitle,channelId,"
-                          "publishedAt,thumbnails(high(url))),"
+                          "publishedAt,thumbnails(maxres(url))),"
                   "statistics(viewCount,likeCount)"
                 ")"
             )
@@ -97,7 +97,7 @@ class YouTubeDetailView(APIView):
         statistics = video_data.get('statistics', {})
         
         thumbnails = snippet.get('thumbnails', {})
-        thumbnail_url = thumbnails.get('high', {}).get('url')
+        thumbnail_url = thumbnails.get('maxres', {}).get('url')
         
         view_count = int(statistics.get('viewCount', 0))
         like_count = int(statistics.get('likeCount', 0))
@@ -145,7 +145,7 @@ class YouTubeTrendingView(APIView):
             "regionCode": "US",
             "maxResults": 12,
             "key": api_key,
-            "fields": "items(id,snippet(title,channelTitle,thumbnails(high(url))))"
+            "fields": "items(id,snippet(title,channelTitle,thumbnails(standard(url))))"
         }
         resp = requests.get(url, params=params).json()
         items = resp.get("items", [])
@@ -153,7 +153,7 @@ class YouTubeTrendingView(APIView):
         results = []
         for vid in items:
             snippet = vid["snippet"]
-            thumbnail_url = snippet["thumbnails"]["high"]["url"]
+            thumbnail_url = snippet["thumbnails"]["standard"]["url"]
             results.append({
                 "youtube_id": vid["id"],
                 "title": html.unescape(snippet["title"]),

@@ -7,6 +7,11 @@ module.exports = {
 			aspectRatio: {
 				video: "16 / 9",
 			},
+			colors: {
+				accent: "var(--color-accent)",
+				"accent-hover": "var(--color-accent-hover)",
+				body: "var(--color-text)",
+			},
 		},
 	},
 	plugins: [

@@ -40,7 +40,7 @@ export default function SidePanel({ className = "" }: SidePanelProps) {
 									: "")
 							}
 						>
-							<Icon className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-300" />
+							<Icon className="w-5 h-5 mr-2 text-accent" />
 							<span>{label}</span>
 						</Link>
 					</li>
