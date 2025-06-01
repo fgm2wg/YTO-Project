@@ -35,6 +35,7 @@
 
     -   06/01/2025:
         -   Added channel page & minor styling changes (not yet integrated subscribing/YouTube account linking)
+        -   Allow playlists to play next video when not actively in tab
     -   05/31/2025:
         -   Added playlists page and player (not yet integrated YouTube playlists)
     -   05/30/2025:
