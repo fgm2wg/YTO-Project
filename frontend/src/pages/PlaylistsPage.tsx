@@ -44,6 +44,10 @@ export default function PlaylistsPage() {
 		}
 	});
 
+	useEffect(() => {
+		setPlayerIndex(0);
+	}, [activePlaylistId]);
+
 	const [isShuffling, setIsShuffling] = useState(false);
 	const [isLooping, setIsLooping] = useState(false);
 	const [shuffleResetKey, setShuffleResetKey] = useState<number>(0);
@@ -518,6 +522,7 @@ export default function PlaylistsPage() {
 							</div>
 
 							<PlaylistPlayer
+								key={activePlaylistId}
 								videoIds={videoIds}
 								shuffle={isShuffling}
 								loop={isLooping}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import YouTube from "react-youtube";
 
 const YouTubePlayer: any = YouTube;
@@ -123,6 +123,26 @@ export default function PlaylistPlayer({
 			? videoIds[currentIndex]
 			: null;
 
+	const playerRef = useRef<YT.Player | null>(null);
+
+	const onPlayerReady = useCallback((event: any) => {
+		playerRef.current = event.target;
+	}, []);
+
+	useEffect(() => {
+		if (!playerRef.current) {
+			return;
+		}
+		if (currentIndex < 0 || currentIndex >= videoIds.length) {
+			return;
+		}
+		const currentlyLoaded = playerRef.current.getVideoData()?.video_id;
+		const desired = videoIds[currentIndex];
+		if (desired && currentlyLoaded !== desired) {
+			playerRef.current.loadVideoById(desired);
+		}
+	}, [currentIndex, videoIds]);
+
 	if (videoIds.length === 0) {
 		return (
 			<p className="text-gray-600 dark:text-gray-300 text-center my-4">
@@ -145,8 +165,9 @@ export default function PlaylistPlayer({
 			{validVideoId ? (
 				<div className="w-full max-w-2xl mx-auto">
 					<YouTubePlayer
-						videoId={validVideoId}
+						videoId={videoIds[0]}
 						opts={opts}
+						onReady={onPlayerReady}
 						onEnd={handleVideoEnd}
 						className="w-full h-full rounded-lg shadow-lg"
 					/>
