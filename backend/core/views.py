@@ -5,9 +5,9 @@ from django.views.decorators.cache import cache_page
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from decouple import config
-from .serializers import YouTubeResultSerializer, YouTubeVideoDetailSerializer
+from .serializers import YouTubeResultSerializer, YouTubeVideoDetailSerializer, YouTubeChannelSerializer
 
-@method_decorator(cache_page(60 * 2), name="dispatch")
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class YouTubeSearchView(APIView):
     def get(self, request):
         search_query = request.query_params.get('q', '')
@@ -27,7 +27,7 @@ class YouTubeSearchView(APIView):
             'fields': (
                 'items('
                   'id/videoId,'
-                  'snippet(title,channelTitle,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url)))'
+                  'snippet(title,channelTitle,channelId,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url)))'
                 '),'
                 'nextPageToken'
             )
@@ -46,6 +46,7 @@ class YouTubeSearchView(APIView):
                 continue
             
             snippet = item['snippet']
+            channel_id = snippet.get('channelId')
             
             thumbnails = snippet.get('thumbnails', {})
             thumbnail_url = None
@@ -58,7 +59,8 @@ class YouTubeSearchView(APIView):
                 'youtube_id': youtube_id,
                 'title': html.unescape(snippet.get('title', '')),
                 'thumbnail_url': thumbnail_url,
-                'channel_name': html.unescape(snippet.get('channelTitle', ''))
+                'channel_name': html.unescape(snippet.get('channelTitle', '')),
+                'channel_id': channel_id
             })
             
         data = YouTubeResultSerializer(results, many=True).data
@@ -152,20 +154,26 @@ class YouTubeTrendingView(APIView):
     def get(self, request):
         api_key = config("YOUTUBE_API_KEY")
         url = "https://www.googleapis.com/youtube/v3/videos"
+        page_token = request.query_params.get('pageToken', None)
         params = {
             "part": "snippet",
             "chart": "mostPopular",
             "regionCode": "US",
             "maxResults": 12,
             "key": api_key,
-            "fields": "items(id,snippet(title,channelTitle,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url))))"
+            "fields": "items(id,snippet(title,channelTitle,channelId,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url)))),nextPageToken"
         }
+        
+        if page_token:
+            params['pageToken'] = page_token
+        
         resp = requests.get(url, params=params).json()
         items = resp.get("items", [])
 
         results = []
         for vid in items:
             snippet = vid["snippet"]
+            channel_id = snippet.get("channelId")
             
             thumbnails = snippet.get("thumbnails", {})
             thumbnail_url = None
@@ -179,7 +187,97 @@ class YouTubeTrendingView(APIView):
                 "title": html.unescape(snippet["title"]),
                 "thumbnail_url": thumbnail_url,
                 "channel_name": html.unescape(snippet["channelTitle"]),
+                "channel_id": channel_id
             })
 
         data = YouTubeResultSerializer(results, many=True).data
-        return Response({"results": data})
+        return Response({
+            "results": data,
+            "nextPageToken": resp.get("nextPageToken")
+        })
+    
+    
+@method_decorator(cache_page(60 * 5), name="dispatch")
+class YouTubeChannelView(APIView):
+    def get(self, request, channel_id):
+        api_key = config('YOUTUBE_API_KEY')
+        
+        url = 'https://www.googleapis.com/youtube/v3/channels'
+        params = {
+            'part': 'snippet,statistics,contentDetails',
+            'id': channel_id,
+            'key': api_key,
+            'fields': 'items(snippet(title,description,thumbnails(default(url),medium(url),high(url))),statistics(subscriberCount),contentDetails(relatedPlaylists(uploads)))'
+        }
+        
+        response = requests.get(url, params=params).json()
+        results = response.get('items', [])
+        if not results:
+            return Response({"error": "channel not found"}, status=404)
+        
+        channel_data = results[0]
+        snippet = channel_data.get('snippet', {})
+        statistics = channel_data.get('statistics', {})
+        uploads_playlist = channel_data.get('contentDetails', {}).get('relatedPlaylists', {}).get('uploads', '')
+        
+        thumbnails = snippet.get("thumbnails", {})
+        thumbnail_url = None
+        for res in ['high', 'medium', 'default']:
+            if res in thumbnails and thumbnails[res].get('url'):
+                thumbnail_url = thumbnails[res]['url']
+                break
+        
+        channel_info = {
+            'channel_id': channel_id,
+            'title': html.unescape(snippet.get('title', '')),
+            'description': html.unescape(snippet.get('description', '')),
+            'thumbnail_url': thumbnail_url,
+            'subscriber_count': int(statistics.get('subscriberCount', 0)),
+            'uploads_playlist': uploads_playlist
+        }
+        
+        url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+        page_token = request.query_params.get('pageToken', None)
+        params = {
+            'part': 'snippet,contentDetails',
+            'playlistId': uploads_playlist,
+            'maxResults': 12,
+            'key': api_key,
+            'fields': 'items(contentDetails(videoId),snippet(title,thumbnails(maxres(url),standard(url),high(url),medium(url),default(url)))),nextPageToken'
+        }
+        
+        if page_token:
+            params['pageToken'] = page_token
+        
+        response = requests.get(url, params=params).json()
+        items = response.get('items', [])
+        
+        videos = []
+        for item in items:
+            video_id = item['contentDetails'].get('videoId')
+            snippet = item.get('snippet', {})
+            
+            thumbnails = snippet.get("thumbnails", {})
+            thumbnail_url = None
+            for res in ['maxres', 'standard', 'high', 'medium', 'default']:
+                if res in thumbnails and snippet['thumbnails'][res].get('url'):
+                    thumbnail_url = snippet['thumbnails'][res]['url']
+                    break
+                
+            videos.append({
+                'youtube_id': video_id,
+                'title': html.unescape(snippet.get('title', '')),
+                'thumbnail_url': thumbnail_url,
+                'channel_name': channel_info['title'],
+                'channel_id': channel_id
+            })
+        
+        next_page_token = response.get('nextPageToken')
+        channel_data = YouTubeChannelSerializer(channel_info).data
+        videos_data = YouTubeResultSerializer(videos, many=True).data
+
+        return Response({
+            'channel': channel_data,
+            'videos': videos_data,
+            'nextPageToken': next_page_token
+        })

@@ -1,5 +1,5 @@
 import type { YouTubeResult } from "../types";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
 	video: YouTubeResult;
@@ -8,6 +8,7 @@ interface Props {
 
 export default function VideoCard({ video, variant = "row" }: Props) {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const to = `${variant === "grid" ? "" : ""}/video/${video.youtube_id}${
 		location.search
 	}`;
@@ -27,9 +28,16 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 				</div>
 				<div className="p-2">
 					<h3 className="text-md font-medium">{video.title}</h3>
-					<p className="text-sm text-gray-500 mt-1">
+					<span
+						className="text-sm text-gray-500 mt-1 hover:underline cursor-pointer"
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							navigate(`/channel/${video.channel_id}`);
+						}}
+					>
 						{video.channel_name}
-					</p>
+					</span>
 				</div>
 			</Link>
 		);
@@ -49,7 +57,16 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 			</div>
 			<div className="flex-1">
 				<h3 className="text-lg font-medium">{video.title}</h3>
-				<p className="text-sm text-gray-500">{video.channel_name}</p>
+				<span
+					className="text-sm text-gray-500 hover:underline cursor-pointer"
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						navigate(`/channel/${video.channel_id}`);
+					}}
+				>
+					{video.channel_name}
+				</span>
 			</div>
 		</Link>
 	);

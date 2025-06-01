@@ -1,11 +1,15 @@
 import VideoGrid from "../components/VideoGrid";
 
-export default function HomePage() {
+interface Props {
+	homeInfiniteScroll: boolean;
+}
+
+export default function HomePage({ homeInfiniteScroll }: Props) {
 	return (
-		<div className="bg-gray-50">
+		<div className="bg-gray-50 dark:bg-gray-900">
 			<div className="flex">
 				<main className="flex-1">
-					<VideoGrid />
+					<VideoGrid infiniteScrollEnabled={homeInfiniteScroll} />
 				</main>
 			</div>
 		</div>
