@@ -4,6 +4,7 @@ export interface YouTubeResult {
 	title: string;
 	thumbnail_url: string;
 	channel_name: string;
+	channel_id: string;
 }
 
 export interface YouTubeVideoDetail extends YouTubeResult {
@@ -12,6 +13,14 @@ export interface YouTubeVideoDetail extends YouTubeResult {
 	view_count: number;
 	like_count: number;
 	published_at: string;
+}
+
+export interface YouTubeChannelInfo {
+	channel_id: string;
+	title: string;
+	description: string;
+	thumbnail_url: string;
+	subscriber_count: number;
 }
 
 export interface ColorSetting {

@@ -34,6 +34,14 @@ export function useThemeSettings() {
 		() => localStorage.getItem("bodyTextDark") || DEFAULTS_DARK.bodyText
 	);
 
+	const [homeInfiniteScroll, setHomeInfiniteScroll] = useState<boolean>(
+		() => {
+			return localStorage.getItem("homeInfiniteScroll") === "false"
+				? false
+				: true;
+		}
+	);
+
 	useEffect(() => {
 		const root = document.documentElement;
 
@@ -50,7 +58,19 @@ export function useThemeSettings() {
 			localStorage.setItem("accentLight", accentLight);
 			localStorage.setItem("bodyTextLight", bodyTextLight);
 		}
-	}, [darkMode, accentLight, bodyTextLight, accentDark, bodyTextDark]);
+
+		localStorage.setItem(
+			"homeInfiniteScroll",
+			homeInfiniteScroll.toString()
+		);
+	}, [
+		darkMode,
+		accentLight,
+		bodyTextLight,
+		accentDark,
+		bodyTextDark,
+		homeInfiniteScroll,
+	]);
 
 	const lightSettings: ColorSetting[] = [
 		{
@@ -87,5 +107,7 @@ export function useThemeSettings() {
 		setDarkMode,
 		lightSettings,
 		darkSettings,
+		homeInfiniteScroll,
+		setHomeInfiniteScroll,
 	};
 }
