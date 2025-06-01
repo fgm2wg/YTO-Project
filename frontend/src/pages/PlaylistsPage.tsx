@@ -259,7 +259,7 @@ export default function PlaylistsPage() {
 												commitRename();
 											}}
 											onKeyDown={onRenameKeyDown}
-											className="flex-1 px-2 py-1 rounded-lg border-none text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+											className="flex-1 px-2 py-1 rounded-lg border-none text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-50 focus:outline-none focus:ring-2 focus:ring-accent"
 										/>
 									) : (
 										<button
