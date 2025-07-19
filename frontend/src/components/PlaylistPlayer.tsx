@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import type { YouTubeResult } from "../types";
 import YouTube from "react-youtube";
+import axios from "axios";
 
 const YouTubePlayer: any = YouTube;
 
 interface Props {
 	videoIds: string[];
+	videoMetadata: YouTubeResult[];
 	shuffle: boolean;
 	loop: boolean;
 	currentIndex: number;
@@ -23,6 +26,7 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 export default function PlaylistPlayer({
 	videoIds,
+	videoMetadata,
 	shuffle,
 	loop,
 	currentIndex,
@@ -82,6 +86,27 @@ export default function PlaylistPlayer({
 			onChangeIndex(videoIds.length - 1);
 		}
 	}, [videoIds.length, currentIndex, onChangeIndex]);
+
+	useEffect(() => {
+		if (
+			currentIndex >= 0 &&
+			currentIndex < videoMetadata.length &&
+			videoMetadata[currentIndex]
+		) {
+			const vid = videoMetadata[currentIndex];
+			axios
+				.post("/api/history/", {
+					youtube_id: vid.youtube_id,
+					title: vid.title,
+					thumbnail_url: vid.thumbnail_url,
+					channel_name: vid.channel_name,
+					channel_id: vid.channel_id || null,
+				})
+				.catch((err) => {
+					console.error("Failed to log playlist video:", err);
+				});
+		}
+	}, [currentIndex, videoMetadata]);
 
 	function handleVideoEnd() {
 		if (
@@ -174,7 +199,7 @@ export default function PlaylistPlayer({
 				</div>
 			) : (
 				<p className="text-gray-600 dark:text-gray-300 text-center my-4">
-					Loading…
+					Loading...
 				</p>
 			)}
 

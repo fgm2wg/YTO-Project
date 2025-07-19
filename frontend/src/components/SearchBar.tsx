@@ -31,7 +31,7 @@ export default function SearchBar({
 			<input
 				value={text}
 				onChange={(e) => setText(e.target.value)}
-				placeholder="Search YouTube…"
+				placeholder="Search YouTube..."
 				className="flex-grow px-3 py-2 border rounded-l bg-gray-50 dark:bg-gray-700 text-body"
 			/>
 			{showClear && text && (
@@ -48,7 +48,7 @@ export default function SearchBar({
 				disabled={loading}
 				className="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-r"
 			>
-				{loading ? "…" : "Search"}
+				{loading ? "..." : "Search"}
 			</button>
 		</form>
 	);

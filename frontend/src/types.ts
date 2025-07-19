@@ -15,6 +15,13 @@ export interface YouTubeVideoDetail extends YouTubeResult {
 	published_at: string;
 }
 
+export interface WatchedVideo extends YouTubeResult {
+	times_watched: number;
+	first_watched_at: string;
+	last_watched_at: string;
+	previously_watched_at: string;
+}
+
 export interface YouTubeChannelInfo {
 	channel_id: string;
 	title: string;
@@ -30,15 +37,8 @@ export interface ColorSetting {
 	setter: Dispatch<SetStateAction<string>>;
 }
 
-export interface VideoItem {
-	id: string;
-	title: string;
-	thumbnail_url: string;
-	channel_name: string;
-}
-
 export interface Playlist {
 	id: string;
 	name: string;
-	videos: VideoItem[];
+	videos: YouTubeResult[];
 }

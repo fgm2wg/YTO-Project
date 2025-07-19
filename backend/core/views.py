@@ -2,10 +2,14 @@ import html
 import requests
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from decouple import config
-from .serializers import YouTubeResultSerializer, YouTubeVideoDetailSerializer, YouTubeChannelSerializer
+from .serializers import YouTubeResultSerializer, YouTubeVideoDetailSerializer, YouTubeChannelSerializer, WatchedVideoSerializer
+from .models import WatchedVideo
+from django.db.models import Q
+from django.utils.timezone import now
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class YouTubeSearchView(APIView):
@@ -139,6 +143,7 @@ class YouTubeDetailView(APIView):
             'title': html.unescape(snippet.get('title', '')),
             'thumbnail_url': thumbnail_url,
             'channel_name': html.unescape(snippet.get('channelTitle', '')),
+            'channel_id': channel_id,
             'description': html.unescape(snippet.get('description', '')),
             'channel_icon_url': channel_icon_url,
             'view_count': view_count,
@@ -281,3 +286,55 @@ class YouTubeChannelView(APIView):
             'videos': videos_data,
             'nextPageToken': next_page_token
         })
+
+class WatchedVideoListCreateView(generics.ListCreateAPIView):
+    serializer_class = WatchedVideoSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q')
+        query_set = WatchedVideo.objects.all().order_by('-last_watched_at')
+        if query:
+            query_set = query_set.filter(
+                Q(title__icontains=query) |
+                Q(channel_name__icontains=query)
+            )
+        return query_set
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        youtube_id = data.get("youtube_id")
+        if not youtube_id:
+            return Response({"error": "youtube_id is required"}, status=400)
+
+        video = WatchedVideo.objects.filter(youtube_id=youtube_id).first()
+        now_time = now()
+
+        if video:
+            video.times_watched += 1
+            video.previously_watched_at = video.last_watched_at
+            video.last_watched_at = now_time
+            video.save()
+        else:
+            video = WatchedVideo.objects.create(
+                youtube_id = youtube_id,
+                title = data.get("title"),
+                thumbnail_url = data.get("thumbnail_url"),
+                channel_name = data.get("channel_name"),
+                channel_id = data.get("channel_id"),
+                times_watched = 1,
+                last_watched_at = now_time,
+                previously_watched_at = now_time,
+                first_watched_at = now_time
+            )
+
+        serializer = self.get_serializer(video)
+        return Response(serializer.data)
+
+class WatchedVideoDeleteView(generics.DestroyAPIView):
+    queryset = WatchedVideo.objects.all()
+    lookup_field = 'youtube_id'
+
+class WatchedVideoClearAllView(APIView):
+    def delete(self, request):
+        WatchedVideo.objects.all().delete()
+        return Response(status=204)
