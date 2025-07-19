@@ -19,10 +19,10 @@
     -   Settings page with various settings for dark mode, color theme, and infinite scroll
     -   Playlists page to view/edit/create playlists and add/edit/remove/play videos
     -   Channels page to view a channel's videos & statistics
+    -   History page to view and delete previously watched videos
 
 -   Future features to add:
 
-    -   History page (store videos watched in postgres database)
     -   Download video feature (likely via yt-downloader & ffmpeg libs)
     -   Custom video player (for downloaded videos & maybe YouTube videos)
     -   Add video categories/tags to videos (for later search filter and home page videos)
@@ -33,6 +33,9 @@
 
 -   Progress:
 
+    -   07/19/2025:
+        -   Added history page & various minor styling, error handling, and consistency changes
+        -   Store watched videos history in postgres db
     -   06/01/2025:
         -   Added channel page & minor styling changes (not yet integrated subscribing/YouTube account linking)
         -   Allow playlists to play next video when not actively in tab
