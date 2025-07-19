@@ -19,12 +19,36 @@ export default function VideoPage() {
 		}
 		axios
 			.get<YouTubeVideoDetail>(`/api/videos/${videoId}/`)
-			.then((r) => setVideo(r.data))
+			.then((response) => {
+				setVideo(response.data);
+
+				const {
+					youtube_id,
+					title,
+					thumbnail_url,
+					channel_name,
+					channel_id,
+				} = response.data;
+				axios
+					.post("/api/history/", {
+						youtube_id,
+						title,
+						thumbnail_url,
+						channel_name,
+						channel_id,
+					})
+					.catch((err) => {
+						console.error(
+							"Failed to log video to history:",
+							err.response?.data || err.message
+						);
+					});
+			})
 			.finally(() => setLoading(false));
 	}, [videoId]);
 
 	if (loading) {
-		return <p className="text-center mt-4 text-gray-500">Loading…</p>;
+		return <p className="text-center mt-4 text-gray-500">Loading...</p>;
 	}
 	if (!video) {
 		return (

@@ -10,7 +10,7 @@ import {
 	ArrowsRightLeftIcon,
 	ArrowPathIcon,
 } from "@heroicons/react/24/solid";
-import type { VideoItem, Playlist } from "../types";
+import type { YouTubeResult, Playlist } from "../types";
 import PlaylistPlayer from "../components/PlaylistPlayer";
 
 export default function PlaylistsPage() {
@@ -146,15 +146,17 @@ export default function PlaylistsPage() {
 				title: string;
 				thumbnail_url: string;
 				channel_name: string;
+				channel_id: string;
 			}>(`/api/videos/${trimmed}/`);
 
 			const detail = response.data;
 
-			const newVideo: VideoItem = {
-				id: detail.youtube_id,
+			const newVideo: YouTubeResult = {
+				youtube_id: detail.youtube_id,
 				title: detail.title,
 				thumbnail_url: detail.thumbnail_url,
 				channel_name: detail.channel_name,
+				channel_id: detail.channel_id,
 			};
 
 			setPlaylists((prev) =>
@@ -220,7 +222,7 @@ export default function PlaylistsPage() {
 		}
 	}
 
-	const videoIds = activePlaylist?.videos.map((v) => v.id) || [];
+	const videoIds = activePlaylist?.videos.map((v) => v.youtube_id) || [];
 
 	const handleChangeIndex = useCallback((newIndex: number) => {
 		setPlayerIndex(newIndex);
@@ -326,7 +328,7 @@ export default function PlaylistsPage() {
 							value={newName}
 							onChange={(e) => setNewName(e.target.value)}
 							placeholder="New playlist name"
-							className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+							className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm"
 						/>
 						<button
 							onClick={handleCreatePlaylist}
@@ -356,7 +358,7 @@ export default function PlaylistsPage() {
 										setVideoInput(e.target.value)
 									}
 									placeholder="YouTube Video ID"
-									className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+									className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm"
 								/>
 								<button
 									onClick={() =>
@@ -378,7 +380,7 @@ export default function PlaylistsPage() {
 												"flex items-center space-x-4 p-4 rounded-lg cursor-pointer " +
 												(isPlaying
 													? "border-2 border-accent bg-accent-lighter dark:bg-gray-700"
-													: "bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600")
+													: "bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600")
 											}
 											onClick={() =>
 												handleUserSelect(idx)
@@ -400,7 +402,7 @@ export default function PlaylistsPage() {
 													{video.channel_name}
 												</p>
 												<p className="text-gray-500 dark:text-gray-400 text-xs italic">
-													ID: {video.id}
+													ID: {video.youtube_id}
 												</p>
 											</div>
 
@@ -524,6 +526,7 @@ export default function PlaylistsPage() {
 							<PlaylistPlayer
 								key={activePlaylistId}
 								videoIds={videoIds}
+								videoMetadata={activePlaylist.videos}
 								shuffle={isShuffling}
 								loop={isLooping}
 								currentIndex={playerIndex}

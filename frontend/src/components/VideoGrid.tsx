@@ -11,13 +11,19 @@ export default function VideoGrid({ infiniteScrollEnabled }: Props) {
 	const [videos, setVideos] = useState<YouTubeResult[]>([]);
 	const [nextPage, setNextPage] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [initialLoad, setInitialLoad] = useState(true);
+	const [hasError, setHasError] = useState(false);
 
 	const loaderRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchTrending = async (pageToken?: string) => {
+		if (!pageToken) {
+			setInitialLoad(true);
+		}
 		setLoading(true);
 
 		try {
+			setHasError(false);
 			const params: any = {};
 			if (pageToken) {
 				params.pageToken = pageToken;
@@ -30,8 +36,13 @@ export default function VideoGrid({ infiniteScrollEnabled }: Props) {
 				setVideos((prev) => [...prev, ...data.results]);
 			}
 			setNextPage(data.nextPageToken || null);
+
+			if (!pageToken) {
+				setInitialLoad(false);
+			}
 		} catch (err) {
 			console.error("Error fetching trending videos:", err);
+			setHasError(true);
 		}
 		setLoading(false);
 	};
@@ -50,7 +61,7 @@ export default function VideoGrid({ infiniteScrollEnabled }: Props) {
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
-				if (entry.isIntersecting && nextPage && !loading) {
+				if (entry.isIntersecting && nextPage && !loading && !hasError) {
 					fetchTrending(nextPage);
 				}
 			},
@@ -61,10 +72,12 @@ export default function VideoGrid({ infiniteScrollEnabled }: Props) {
 		return () => observer.disconnect();
 	}, [nextPage, loading]);
 
-	if (loading && videos.length === 0) {
+	if (initialLoad && videos.length === 0) {
 		return (
 			<div className="fixed inset-x-0 mt-4 flex justify-center">
-				<p className="text-gray-500">Loading recommendations…</p>
+				<p className="text-gray-500 dark:text-gray-400">
+					Loading recommendations...
+				</p>
 			</div>
 		);
 	}
@@ -80,7 +93,15 @@ export default function VideoGrid({ infiniteScrollEnabled }: Props) {
 			{infiniteScrollEnabled && <div ref={loaderRef} />}
 
 			{infiniteScrollEnabled && loading && videos.length > 0 && (
-				<p className="text-center text-gray-500 py-4">Loading more…</p>
+				<p className="text-center text-gray-500 dark:text-gray-400 py-4">
+					Loading more...
+				</p>
+			)}
+
+			{hasError && (
+				<p className="text-center text-red-500 dark:text-red-400 py-4">
+					Error loading videos. Please try again later.
+				</p>
 			)}
 		</>
 	);

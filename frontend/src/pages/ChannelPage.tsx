@@ -10,7 +10,8 @@ export default function ChannelPage() {
 	const [channel, setChannel] = useState<YouTubeChannelInfo | null>(null);
 	const [videos, setVideos] = useState<YouTubeResult[]>([]);
 	const [nextPage, setNextPage] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [hasError, setHasError] = useState(false);
 
 	const loaderRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,6 +27,7 @@ export default function ChannelPage() {
 		}
 
 		try {
+			setHasError(false);
 			const { data } = await axios.get(`/api/channel/${channelId}/`, {
 				params,
 			});
@@ -40,6 +42,7 @@ export default function ChannelPage() {
 			setNextPage(data.nextPageToken || null);
 		} catch (err) {
 			console.error("Error fetching channel:", err);
+			setHasError(true);
 		}
 
 		setLoading(false);
@@ -60,7 +63,7 @@ export default function ChannelPage() {
 		}
 		const observer = new IntersectionObserver(
 			([entry]) => {
-				if (entry.isIntersecting && nextPage && !loading) {
+				if (entry.isIntersecting && nextPage && !loading && !hasError) {
 					fetchChannel(nextPage);
 				}
 			},
@@ -74,7 +77,9 @@ export default function ChannelPage() {
 	if (!channel) {
 		return (
 			<div className="fixed inset-x-0 mt-4 flex justify-center">
-				<p className="text-gray-500">Loading channel info…</p>
+				<p className="text-gray-500 dark:text-gray-400">
+					Loading channel info...
+				</p>
 			</div>
 		);
 	}
@@ -91,7 +96,7 @@ export default function ChannelPage() {
 				)}
 				<div>
 					<h1 className="text-2xl font-semibold">{channel.title}</h1>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-gray-500 dark:text-gray-400">
 						{channel.subscriber_count.toLocaleString()} subscribers
 					</p>
 				</div>
@@ -117,10 +122,16 @@ export default function ChannelPage() {
 
 			<div ref={loaderRef} />
 
-			{loading && (
-				<div className="fixed inset-x-0 -mt-4 flex justify-center">
-					<p className="text-gray-500">Loading more…</p>
-				</div>
+			{loading && videos.length > 0 && (
+				<p className="text-center text-gray-500 dark:text-gray-400 py-4">
+					Loading more...
+				</p>
+			)}
+
+			{hasError && (
+				<p className="text-center text-red-500 dark:text-red-400 py-4">
+					Error loading videos. Please try again later.
+				</p>
 			)}
 		</div>
 	);

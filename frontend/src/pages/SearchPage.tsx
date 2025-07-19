@@ -7,7 +7,7 @@ import type { YouTubeResult } from "../types";
 export default function SearchPage() {
 	const [results, setResults] = useState<YouTubeResult[]>([]);
 	const [nextPage, setNextPage] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [searchParams] = useSearchParams();
 
 	const queryParam = searchParams.get("q") || "";
@@ -69,7 +69,9 @@ export default function SearchPage() {
 			<div ref={loaderRef} />
 
 			{loading && (
-				<p className="text-center mt-4 text-gray-500">Loading…</p>
+				<p className="text-center mt-4 text-gray-500 dark:text-gray-400">
+					Loading...
+				</p>
 			)}
 		</div>
 	);

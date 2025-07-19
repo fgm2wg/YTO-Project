@@ -29,7 +29,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 				<div className="p-2">
 					<h3 className="text-md font-medium">{video.title}</h3>
 					<span
-						className="text-sm text-gray-500 mt-1 hover:underline cursor-pointer"
+						className="text-sm text-gray-500 dark:text-gray-400 mt-1 hover:underline cursor-pointer"
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
@@ -58,7 +58,7 @@ export default function VideoCard({ video, variant = "row" }: Props) {
 			<div className="flex-1">
 				<h3 className="text-lg font-medium">{video.title}</h3>
 				<span
-					className="text-sm text-gray-500 hover:underline cursor-pointer"
+					className="text-sm text-gray-500 dark:text-gray-400 hover:underline cursor-pointer"
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
