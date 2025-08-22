@@ -9,17 +9,8 @@ import HomePage from "./pages/HomePage";
 import PlaylistsPage from "./pages/PlaylistsPage";
 import HistoryPage from "./pages/HistoryPage";
 import SettingsPage from "./pages/SettingsPage";
-import { useThemeSettings } from "./hooks/useThemeSettings";
 
 export default function App() {
-	const {
-		darkMode,
-		setDarkMode,
-		lightSettings,
-		darkSettings,
-		homeInfiniteScroll,
-		setHomeInfiniteScroll,
-	} = useThemeSettings();
 	const [collapsed, setCollapsed] = useState(false);
 	const { pathname } = useLocation();
 	const isMainLayout = pathname === "/" || pathname.startsWith("/channel");
@@ -38,14 +29,7 @@ export default function App() {
 
 				<main className="flex-1 overflow-y-auto p-4">
 					<Routes>
-						<Route
-							path="/"
-							element={
-								<HomePage
-									homeInfiniteScroll={homeInfiniteScroll}
-								/>
-							}
-						/>
+						<Route path="/" element={<HomePage />} />
 						<Route path="/search" element={<SearchPage />} />
 						<Route path="/video/:videoId" element={<VideoPage />} />
 						<Route
@@ -54,21 +38,7 @@ export default function App() {
 						/>
 						<Route path="/playlists" element={<PlaylistsPage />} />
 						<Route path="/history" element={<HistoryPage />} />
-						<Route
-							path="/settings"
-							element={
-								<SettingsPage
-									darkMode={darkMode}
-									setDarkMode={setDarkMode}
-									lightSettings={lightSettings}
-									darkSettings={darkSettings}
-									homeInfiniteScroll={homeInfiniteScroll}
-									setHomeInfiniteScroll={
-										setHomeInfiniteScroll
-									}
-								/>
-							}
-						/>
+						<Route path="/settings" element={<SettingsPage />} />
 						<Route path="*" element={<Navigate to="/" replace />} />
 					</Routes>
 				</main>

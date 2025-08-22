@@ -9,6 +9,8 @@ const DEFAULTS_DARK = {
 	accent: "#60a5fa",
 	bodyText: "#f9fafb",
 };
+const DEFAULT_DOWNLOAD_POLL_INTERVAL_MS = 1000;
+const DEFAULT_PLAYLIST_DOWNLOAD_BATCH_SIZE = 5;
 
 export function useThemeSettings() {
 	const [darkMode, setDarkMode] = useState(() => {
@@ -42,6 +44,24 @@ export function useThemeSettings() {
 		}
 	);
 
+	const [downloadPollingInterval, setDownloadPollingInterval] = useState(
+		() => {
+			const saved = localStorage.getItem("downloadPollingInterval");
+			return saved
+				? parseInt(saved, 10)
+				: DEFAULT_DOWNLOAD_POLL_INTERVAL_MS;
+		}
+	);
+
+	const [playlistDownloadBatchSize, setPlaylistDownloadBatchSize] = useState(
+		() => {
+			const saved = localStorage.getItem("playlistDownloadBatchSize");
+			return saved
+				? parseInt(saved, 10)
+				: DEFAULT_PLAYLIST_DOWNLOAD_BATCH_SIZE;
+		}
+	);
+
 	useEffect(() => {
 		const root = document.documentElement;
 
@@ -63,6 +83,14 @@ export function useThemeSettings() {
 			"homeInfiniteScroll",
 			homeInfiniteScroll.toString()
 		);
+		localStorage.setItem(
+			"downloadPollingInterval",
+			downloadPollingInterval.toString()
+		);
+		localStorage.setItem(
+			"playlistDownloadBatchSize",
+			playlistDownloadBatchSize.toString()
+		);
 	}, [
 		darkMode,
 		accentLight,
@@ -70,6 +98,8 @@ export function useThemeSettings() {
 		accentDark,
 		bodyTextDark,
 		homeInfiniteScroll,
+		downloadPollingInterval,
+		playlistDownloadBatchSize,
 	]);
 
 	const lightSettings: ColorSetting[] = [
@@ -109,5 +139,9 @@ export function useThemeSettings() {
 		darkSettings,
 		homeInfiniteScroll,
 		setHomeInfiniteScroll,
+		downloadPollingInterval,
+		setDownloadPollingInterval,
+		playlistDownloadBatchSize,
+		setPlaylistDownloadBatchSize,
 	};
 }

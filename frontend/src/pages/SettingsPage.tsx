@@ -1,24 +1,21 @@
-import type { Dispatch, SetStateAction } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
-import type { ColorSetting } from "../types";
+import { useTheme } from "../contexts/ThemeSettingsContext";
+import { pl } from "date-fns/locale";
 
-interface Props {
-	darkMode: boolean;
-	setDarkMode: Dispatch<SetStateAction<boolean>>;
-	lightSettings: ColorSetting[];
-	darkSettings: ColorSetting[];
-	homeInfiniteScroll: boolean;
-	setHomeInfiniteScroll: Dispatch<SetStateAction<boolean>>;
-}
+export default function SettingsPage() {
+	const {
+		darkMode,
+		setDarkMode,
+		lightSettings,
+		darkSettings,
+		homeInfiniteScroll,
+		setHomeInfiniteScroll,
+		downloadPollingInterval,
+		setDownloadPollingInterval,
+		playlistDownloadBatchSize,
+		setPlaylistDownloadBatchSize,
+	} = useTheme();
 
-export default function SettingsPage({
-	darkMode,
-	setDarkMode,
-	lightSettings,
-	darkSettings,
-	homeInfiniteScroll,
-	setHomeInfiniteScroll,
-}: Props) {
 	return (
 		<div className="max-w-screen-lg mx-auto p-4 space-y-8">
 			<h1 className="text-4xl font-semibold">Settings</h1>
@@ -49,6 +46,58 @@ export default function SettingsPage({
 						/>
 						<span>{homeInfiniteScroll ? "On" : "Off"}</span>
 					</label>
+				</div>
+				<div className="flex items-center relative justify-between p-4 rounded shadow bg-gray-50 dark:bg-gray-800">
+					<span className="text-lg">Download Polling Rate (ms)</span>
+					<input
+						type="number"
+						min={100}
+						step={100}
+						value={downloadPollingInterval}
+						onChange={(e) =>
+							setDownloadPollingInterval(
+								Math.max(100, parseInt(e.target.value, 10))
+							)
+						}
+						className="w-24 p-1 rounded border dark:bg-gray-700"
+					/>
+					{downloadPollingInterval !== 1000 && (
+						<button
+							onClick={() => setDownloadPollingInterval(1000)}
+							title="Reset to default"
+							className="absolute right-[-3rem] top-1/2 -translate-y-1/2 p-2 rounded 
+                           bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600"
+						>
+							<ArrowPathIcon className="w-5 h-5 text-accent" />
+						</button>
+					)}
+				</div>
+				<div className="flex items-center relative justify-between p-4 rounded shadow bg-gray-50 dark:bg-gray-800">
+					<span className="text-lg">
+						Playlist Download Batch Size
+					</span>
+					<input
+						type="number"
+						min={1}
+						step={1}
+						value={playlistDownloadBatchSize}
+						onChange={(e) =>
+							setPlaylistDownloadBatchSize(
+								Math.max(1, parseInt(e.target.value, 10))
+							)
+						}
+						className="w-24 p-1 rounded border dark:bg-gray-700"
+					/>
+					{playlistDownloadBatchSize !== 5 && (
+						<button
+							onClick={() => setPlaylistDownloadBatchSize(5)}
+							title="Reset to default"
+							className="absolute right-[-3rem] top-1/2 -translate-y-1/2 p-2 rounded 
+                           bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600"
+						>
+							<ArrowPathIcon className="w-5 h-5 text-accent" />
+						</button>
+					)}
 				</div>
 			</div>
 

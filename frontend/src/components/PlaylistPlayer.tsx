@@ -187,7 +187,7 @@ export default function PlaylistPlayer({
 
 	return (
 		<div className="mt-6 flex flex-col items-center space-y-2">
-			{validVideoId ? (
+			{videoIds.length > 0 && validVideoId && videoIds[0] ? (
 				<div className="w-full max-w-2xl mx-auto">
 					<YouTubePlayer
 						videoId={videoIds[0]}

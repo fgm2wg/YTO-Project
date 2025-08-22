@@ -1,5 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import type { ChangeEvent, KeyboardEvent } from "react";
+import {
+	useState,
+	useEffect,
+	useCallback,
+	useRef,
+	type ChangeEvent,
+	type KeyboardEvent,
+} from "react";
 import axios from "axios";
 import {
 	PlusIcon,
@@ -12,6 +18,10 @@ import {
 } from "@heroicons/react/24/solid";
 import type { YouTubeResult, Playlist } from "../types";
 import PlaylistPlayer from "../components/PlaylistPlayer";
+import DownloadButton, {
+	type DownloadButtonHandle,
+} from "../components/DownloadButton";
+import DownloadAllButton from "../components/DownloadAllButton";
 
 export default function PlaylistsPage() {
 	const [playlists, setPlaylists] = useState<Playlist[]>(() => {
@@ -233,6 +243,8 @@ export default function PlaylistsPage() {
 		setShuffleResetKey((k) => k + 1);
 	}
 
+	const buttonRefs = useRef<Record<string, DownloadButtonHandle | null>>({});
+
 	return (
 		<div className="max-w-screen-xl mx-auto">
 			<h1 className="text-3xl font-semibold mb-6">Playlists</h1>
@@ -346,9 +358,17 @@ export default function PlaylistsPage() {
 						</p>
 					) : (
 						<>
-							<h2 className="text-2xl font-semibold mb-5">
-								{activePlaylist.name}
-							</h2>
+							<div className="flex items-center justify-between mb-5">
+								<h2 className="text-2xl font-semibold ">
+									{activePlaylist.name}
+								</h2>
+								<DownloadAllButton
+									youtubeIds={activePlaylist.videos.map(
+										(v) => v.youtube_id
+									)}
+									buttonRefs={buttonRefs}
+								/>
+							</div>
 
 							<div className="flex space-x-3 mb-6">
 								<input
@@ -407,6 +427,16 @@ export default function PlaylistsPage() {
 											</div>
 
 											<div className="flex items-center space-x-2">
+												<DownloadButton
+													key={video.youtube_id}
+													youtubeId={video.youtube_id}
+													className="dark:hover:bg-gray-500"
+													ref={(el) => {
+														buttonRefs.current[
+															video.youtube_id
+														] = el;
+													}}
+												/>
 												<button
 													onClick={(e) => {
 														e.stopPropagation();
