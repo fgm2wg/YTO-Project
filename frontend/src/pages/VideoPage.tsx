@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/solid";
 import axios from "axios";
 import type { YouTubeVideoDetail } from "../types";
+import DownloadButton from "../components/DownloadButton";
 
 export default function VideoPage() {
 	const { videoId } = useParams<{ videoId: string }>();
@@ -71,7 +72,13 @@ export default function VideoPage() {
 				/>
 			</div>
 
-			<h1 className="mt-4 text-3xl font-semibold">{video.title}</h1>
+			<div className="mt-4 flex items-center justify-between">
+				<h1 className="text-3xl font-semibold">{video.title}</h1>
+				<DownloadButton
+					youtubeId={video.youtube_id}
+					className="dark:hover:bg-gray-700"
+				/>
+			</div>
 
 			<div className="mt-2 flex items-center space-x-3">
 				<img

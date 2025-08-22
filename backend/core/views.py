@@ -1,7 +1,11 @@
 import html
 import requests
+import threading
+import re
+from pathlib import Path
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +14,9 @@ from .serializers import YouTubeResultSerializer, YouTubeVideoDetailSerializer, 
 from .models import WatchedVideo
 from django.db.models import Q
 from django.utils.timezone import now
+from yt_dlp import YoutubeDL
+from urllib.parse import urlparse, parse_qs
+from uuid import uuid4
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class YouTubeSearchView(APIView):
@@ -338,3 +345,86 @@ class WatchedVideoClearAllView(APIView):
     def delete(self, request):
         WatchedVideo.objects.all().delete()
         return Response(status=204)
+
+class YouTubeDownloadView(APIView):
+    def post(self, request):
+        url = request.data.get("url")
+        format = request.data.get("format", "video").lower()
+        if not url:
+            return Response({"error": "url is required"}, status=400)
+        if format not in ["audio", "video"]:
+            return Response({"error": "Invalid format. Choose 'audio' or 'video'."}, status=400)
+
+        job_id = str(uuid4())
+        cache.set(job_id, {"progress": "0%", "status": "downloading"}, timeout=300)
+
+        def run_download():
+            try:
+                parsed = urlparse(url)
+                query = parse_qs(parsed.query)
+                youtube_id = query.get("v", [None])[0]
+                if not youtube_id:
+                    raise Exception("Could not extract video ID")
+
+                project_root = Path(__file__).resolve().parent.parent.parent
+                downloads_dir = project_root / "downloads"
+                downloads_dir.mkdir(parents=True, exist_ok=True)
+                
+                outtmpl = str(downloads_dir / f"{youtube_id}-{format}.%(ext)s")
+                actual_path = downloads_dir / f"{youtube_id}-{format}.webm"
+
+                def progress_hook(d):
+                    ANSI_ESCAPE = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
+                    progress_str = ANSI_ESCAPE.sub('', d.get("_percent_str", "0.0%"))
+
+                    stage = "audio" if format == "audio" else (
+                        "video" if d.get("filename", "").endswith((".mp4", ".mkv", ".webm")) else "audio"
+                    )
+                    
+                    cache.set(job_id, {
+                        "progress": progress_str,
+                        "status": "downloading",
+                        "stage": stage
+                    }, timeout=300)
+
+                    if d['status'] == 'finished':
+                        cache.set(job_id, {
+                            "progress": "100%",
+                            "status": "finished",
+                            "url": f"/downloads/{youtube_id}-{format}.webm"
+                        }, timeout=300)
+                
+                if actual_path.exists():
+                    cache.set(job_id, {
+                        "progress": "100%",
+                        "status": "finished",
+                        "url": f"/downloads/{youtube_id}-{format}.webm"
+                    }, timeout=300)
+                    return
+
+                ydl_opts = {
+                    'format': 'bestvideo+bestaudio/best',
+                    'outtmpl': outtmpl,
+                    'progress_hooks': [progress_hook],
+                    'prefer_ffmpeg': True,
+                }
+
+                if format == "audio":
+                    ydl_opts['format'] = 'bestaudio/best'
+
+                with YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([url])
+
+            except Exception as e:
+                cache.set(job_id, {"status": "error", "error": str(e)}, timeout=300)
+
+        threading.Thread(target=run_download).start()
+
+        return Response({"job_id": job_id})
+        
+class YouTubeDownloadStatusView(APIView):
+    def get(self, request, job_id):
+        data = cache.get(job_id)
+        if data is None:
+            return Response({"error": "Job not found"}, status=404)
+        return Response(data)

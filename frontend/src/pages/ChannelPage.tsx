@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import type { YouTubeResult } from "../types";
+import type { YouTubeResult, YouTubeChannelInfo } from "../types";
 import VideoCard from "../components/VideoCard";
-import type { YouTubeChannelInfo } from "../types";
 
 export default function ChannelPage() {
 	const { channelId } = useParams<{ channelId: string }>();
