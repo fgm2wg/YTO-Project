@@ -20,10 +20,11 @@
     -   Playlists page to view/edit/create playlists and add/edit/remove/play videos
     -   Channels page to view a channel's videos & statistics
     -   History page to view and delete previously watched videos
+    -   Download videos as audio or video .webm files (via yt-downloader & ffmpeg libs)
 
 -   Future features to add:
 
-    -   Download video feature (likely via yt-downloader & ffmpeg libs)
+    -   Add Downloads page to view & manage locally downloaded files
     -   Custom video player (for downloaded videos & maybe YouTube videos)
     -   Add video categories/tags to videos (for later search filter and home page videos)
     -   Add search filters to search bar (by channel, category, duration, upload date, etc.)
@@ -33,6 +34,9 @@
 
 -   Progress:
 
+    -   08/22/2025:
+        -   Added ability to download videos as audio-only or audio+video formats as .webm files
+        -   Added ability to download entire playlists as audio-only in customizable batch sizes
     -   07/19/2025:
         -   Added history page & various minor styling, error handling, and consistency changes
         -   Store watched videos history in postgres db
