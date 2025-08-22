@@ -31,6 +31,7 @@
     -   Add watch later feature (likely use playlist feature for this)
     -   Add custom video recommendation (possibly via using AI/ML)
     -   Add comments to videos (maybe, but probably not)
+    -   Add unit tests :(
 
 -   Progress:
 
